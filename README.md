@@ -1,5 +1,9 @@
 # majiang
 
+麻將出牌策略、Vue.js 視覺化與互動式介面
+
+![](https://raw.githubusercontent.com/tyzesc/majiang/master/demo.png)
+
 ## Project setup
 ```
 npm install
