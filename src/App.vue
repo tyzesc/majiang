@@ -10,7 +10,7 @@
           v-bind:key="'myhands'+index"
           :cid="cid"
           @click="out(cid)"
-          :class="(index == sortedcards.length - 1) ? 'drawhand' : ''"
+          :class="[(index == sortedcards.length - 1) ? 'drawhand' : '', (hintout.indexOf(cid) != -1) ? 'special' : '']"
         />
       </div>
     </div>
@@ -28,6 +28,7 @@ export default {
       boardcards: [],
       cards: [],
       tiles: [],
+      hintout: [],
     };
   },
   mounted() {
@@ -38,6 +39,7 @@ export default {
     }
     this.tiles.sort(() => Math.random() - 0.5);
     this.cards = this.tiles.splice(0, 17);
+    this.tick();
   },
 
   components: {
@@ -51,6 +53,26 @@ export default {
         this.cards.splice(this.cards.indexOf(cid), 1)
       );
       this.cards = this.cards.concat(this.tiles.splice(0, 1));
+      this.tick();
+    },
+    tick() {
+      this.hint();
+    },
+    hint() {
+      let temp = Array(38).fill(0);
+      for (let x of this.cards) {
+        temp[x]++;
+      }
+      temp.splice(30, 1);
+      temp.splice(20, 1);
+      temp.splice(10, 1);
+      temp.splice(0, 1);
+
+      fetch("http://localhost:3000/check/" + temp.join(""))
+        .then((res) => res.json())
+        .then((j) => {
+          this.hintout = j.out;
+        });
     },
   },
 
@@ -98,6 +120,10 @@ body {
 <style scoped>
 .drawhand {
   margin-left: 1.2rem;
+}
+
+.special {
+  -webkit-filter: brightness(1.5);
 }
 
 .m1 {
